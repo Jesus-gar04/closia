@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="closia-g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D97843"/>
+      <stop offset="1" stop-color="#BE5E34"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="44" height="44" rx="13" fill="url(#closia-g)"/>
+  <text x="24" y="25" text-anchor="middle" dominant-baseline="central"
+        font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="600"
+        fill="#FFFFFF">c</text>
+</svg>

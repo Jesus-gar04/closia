@@ -1,0 +1,46 @@
+export default {
+  content: ['./src/**/*.{jsx,js}', './index.html'],
+  theme: {
+    extend: {
+      colors: {
+        canvas:        'var(--bg-canvas)',
+        surface:       'var(--bg-surface)',
+        elevated:      'var(--bg-elevated)',
+        tinted:        'var(--bg-tinted)',
+        deep:          'var(--bg-deep)',
+        hairline:      'var(--hairline)',
+        'line-strong': 'var(--line-strong)',
+        ink:           'var(--ink)',
+        'ink-soft':    'var(--ink-soft)',
+        muted:         'var(--muted)',
+        faint:         'var(--faint)',
+        accent:        'var(--accent)',
+        'accent-deep': 'var(--accent-deep)',
+        'accent-soft': 'var(--accent-soft)',
+        'accent-tint': 'var(--accent-tint)',
+        sage:          'var(--sage)',
+        'sage-soft':   'var(--sage-soft)',
+        danger:        'var(--danger)',
+        'danger-soft': 'var(--danger-soft)',
+      },
+      fontFamily: {
+        display: ['Fraunces', 'Georgia', 'serif'],
+        body:    ['Plus Jakarta Sans', 'sans-serif'],
+      },
+      borderRadius: {
+        'xs': 'var(--r-xs)',
+        'sm': 'var(--r-sm)',
+        'md': 'var(--r-md)',
+        'lg': 'var(--r-lg)',
+        'xl': 'var(--r-xl)',
+      },
+      boxShadow: {
+        xs:   'var(--shadow-xs)',
+        soft: 'var(--shadow-sm)',
+        card: 'var(--shadow-md)',
+        lift: 'var(--shadow-lg)',
+        ring: 'var(--shadow-ring)',
+      },
+    },
+  },
+}

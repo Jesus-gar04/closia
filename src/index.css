@@ -1,0 +1,329 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap');
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════
+   CLOSIA · Sistema visual v5 — "Atelier"
+   Neutro cálido editorial · superficies nítidas · acento terracota.
+   Display serif (Fraunces) para titulares + sans (Jakarta) para UI.
+   Controles de formulario definidos, elevación real, foco accesible.
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Fondos ─────────────────────────────────────── */
+  --bg-canvas:    #EFE9E0;   /* lienzo cálido */
+  --bg-surface:   #FFFFFF;   /* tarjetas nítidas */
+  --bg-elevated:  #FFFFFF;
+  --bg-tinted:    #EAE2D5;   /* chips / hover suave */
+  --bg-deep:      #DED3C2;   /* hover fuerte */
+  --bg-frost:     rgba(255, 255, 255, 0.72); /* superficies glass */
+
+  /* ── Tinta — contraste alto ─────────────────────── */
+  --ink:          #1E1A14;
+  --ink-soft:     #463F34;
+  --muted:        #756B5C;
+  --faint:        #A99E8C;
+  --hairline:     #E6DDCD;
+  --line-strong:  #D4C8B3;
+
+  /* ── Acento terracota ───────────────────────────── */
+  --accent:       #BE5E34;
+  --accent-deep:  #98441F;
+  --accent-soft:  #F1D9C8;
+  --accent-tint:  #FAEDE3;
+  --accent-bright:#D97843;
+
+  /* ── Secundario salvia (uso mínimo, sofisticado) ── */
+  --sage:         #74815F;
+  --sage-soft:    #E1E5D5;
+
+  /* ── Estados ────────────────────────────────────── */
+  --success:      #57845C;
+  --success-soft: #DEEAD9;
+  --danger:       #BC4A37;
+  --danger-soft:  #F4DAD2;
+
+  /* ── Tipografía ─────────────────────────────────── */
+  --font-display: 'Fraunces', 'Plus Jakarta Sans', Georgia, serif;
+  --font-body:    'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* ── Radios (modernos, consistentes) ────────────── */
+  --r-xs: 8px;
+  --r-sm: 11px;
+  --r-md: 15px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* ── Elevación (sombras cálidas en capas) ───────── */
+  --shadow-xs:  0 1px 2px rgba(40, 30, 18, 0.06);
+  --shadow-sm:  0 1px 3px rgba(40, 30, 18, 0.07), 0 2px 6px rgba(40, 30, 18, 0.05);
+  --shadow-md:  0 4px 12px rgba(40, 30, 18, 0.08), 0 10px 28px rgba(40, 30, 18, 0.09);
+  --shadow-lg:  0 8px 24px rgba(40, 30, 18, 0.12), 0 24px 56px rgba(40, 30, 18, 0.14);
+  --shadow-accent: 0 6px 18px rgba(190, 94, 52, 0.30);
+  --ring:       0 0 0 3px rgba(190, 94, 52, 0.26);
+  --ring-ink:   0 0 0 3px rgba(40, 30, 18, 0.14);
+
+  /* ── Espaciado base (escala de 4) ───────────────── */
+  --gutter: 28px;
+}
+
+/* Reset + base. DEBE ir en @layer base: en Tailwind v4 las utilidades viven en
+   @layer utilities y el CSS sin capa las pisa SIEMPRE (las capas pierden contra lo
+   no-capado). Si este reset quedara fuera de capa, `*{margin:0;padding:0}` anularía
+   todas las utilidades p-*/m-*/mx-auto de la app. */
+@layer base {
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: none; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg-canvas);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 { letter-spacing: -0.02em; font-weight: 700; }
+.font-display { font-family: var(--font-display); letter-spacing: -0.015em; }
+
+/* ── Scrollbars finos ─────────────────────────────── */
+::-webkit-scrollbar       { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(117, 107, 92, 0.30);
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(117, 107, 92, 0.50); background-clip: content-box; }
+
+::selection { background: var(--accent-soft); color: var(--accent-deep); }
+
+:focus-visible { outline: none; box-shadow: var(--ring); border-radius: 10px; }
+
+button, a, input, select, textarea { transition: background-color .18s, border-color .18s, color .18s, box-shadow .18s, transform .12s; }
+} /* end @layer base */
+
+/* ═══════════════════════════════════════════════════
+   COMPONENTES — en @layer components para que las utilidades de Tailwind
+   (capa utilities, posterior) puedan sobrescribirlos cuando haga falta.
+   ═══════════════════════════════════════════════════ */
+@layer components {
+
+/* ── Tipografía util ── */
+.eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--accent-deep);
+}
+.title-xl { font-family: var(--font-display); font-weight: 600; font-size: clamp(26px, 3vw, 34px); line-height: 1.05; letter-spacing: -0.02em; }
+.title-lg { font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.1; letter-spacing: -0.02em; }
+
+/* ═══════════════════════════════════════════════════
+   BOTONES
+   ═══════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-weight: 600; font-size: 13.5px; line-height: 1;
+  border-radius: var(--r-sm); white-space: nowrap;
+  padding: 0 16px; height: 42px;
+  border: 1px solid transparent;
+  user-select: none;
+}
+.btn:active { transform: scale(0.975); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:disabled:active { transform: none; }
+.btn-sm { height: 34px; padding: 0 12px; font-size: 12.5px; border-radius: var(--r-xs); }
+.btn-lg { height: 50px; padding: 0 24px; font-size: 15px; border-radius: var(--r-md); }
+.btn-block { width: 100%; }
+
+.btn-primary { background: var(--ink); color: #fff; box-shadow: var(--shadow-sm); }
+.btn-primary:hover:not(:disabled) { background: #2c261d; box-shadow: var(--shadow-md); }
+
+.btn-accent {
+  background: linear-gradient(180deg, var(--accent-bright), var(--accent));
+  color: #fff; box-shadow: var(--shadow-accent);
+}
+.btn-accent:hover:not(:disabled) { filter: brightness(1.04); box-shadow: 0 8px 22px rgba(190, 94, 52, 0.42); }
+
+.btn-outline {
+  background: var(--bg-surface); color: var(--ink-soft);
+  border-color: var(--line-strong); box-shadow: var(--shadow-xs);
+}
+.btn-outline:hover:not(:disabled) { border-color: var(--accent); color: var(--ink); }
+
+.btn-ghost { background: transparent; color: var(--muted); }
+.btn-ghost:hover:not(:disabled) { background: var(--bg-tinted); color: var(--ink); }
+
+.btn-danger { background: var(--danger-soft); color: var(--danger); }
+.btn-danger:hover:not(:disabled) { background: var(--danger); color: #fff; }
+
+.btn-icon { width: 42px; padding: 0; }
+.btn-icon.btn-sm { width: 34px; }
+
+/* ═══════════════════════════════════════════════════
+   CAMPOS DE FORMULARIO
+   ═══════════════════════════════════════════════════ */
+input, select, textarea { background: transparent; border: none; outline: none; width: 100%; }
+input[type="checkbox"], input[type="radio"] { width: auto; }
+
+.field {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  padding: 0 14px; height: 46px;
+  font-size: 14px; color: var(--ink);
+  box-shadow: var(--shadow-xs);
+}
+textarea.field { height: auto; padding: 12px 14px; line-height: 1.55; }
+.field::placeholder { color: var(--faint); }
+.field:hover { border-color: var(--muted); }
+.field:focus {
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+
+.field-label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--ink-soft); margin-bottom: 7px;
+}
+.field-req { color: var(--accent); }
+.field-hint { font-size: 11.5px; color: var(--faint); }
+
+/* ── Select personalizado (visible y definido) ────── */
+.select-wrap { position: relative; }
+.select {
+  appearance: none; -webkit-appearance: none;
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  padding: 0 40px 0 14px; height: 46px;
+  font-size: 14px; font-weight: 500; color: var(--ink);
+  box-shadow: var(--shadow-xs); cursor: pointer;
+}
+.select:hover { border-color: var(--muted); }
+.select:focus { border-color: var(--accent); box-shadow: var(--ring); }
+.select-wrap::after {
+  content: ""; position: absolute; right: 15px; top: 50%;
+  width: 9px; height: 9px; pointer-events: none;
+  border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+  transform: translateY(-65%) rotate(45deg);
+}
+
+/* ── Toggle switch ────────────────────────────────── */
+.switch { position: relative; width: 46px; height: 26px; border-radius: 999px; background: var(--line-strong); flex-shrink: 0; transition: background .2s; }
+.switch[data-on="true"] { background: var(--accent); }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 999px; background: #fff; box-shadow: var(--shadow-sm); transition: left .2s; }
+.switch[data-on="true"]::after { left: 23px; }
+
+/* ═══════════════════════════════════════════════════
+   CHIPS / PÍLDORAS
+   ═══════════════════════════════════════════════════ */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 38px; padding: 0 16px; border-radius: var(--r-pill);
+  font-size: 13px; font-weight: 500;
+  background: var(--bg-surface); color: var(--ink-soft);
+  border: 1.5px solid var(--line-strong);
+}
+.chip:hover { border-color: var(--accent); color: var(--ink); }
+.chip[data-on="true"] {
+  background: var(--ink); border-color: var(--ink); color: #fff;
+}
+.chip[data-on="true"]:hover { background: #2c261d; }
+.chip:active { transform: scale(0.95); }
+
+/* ── Chip seleccionable acento (tarjeta-opción) ──── */
+.opt {
+  text-align: left; border-radius: var(--r-sm);
+  border: 1.5px solid var(--line-strong); background: var(--bg-surface);
+  padding: 11px 13px; font-size: 13px; color: var(--ink-soft);
+  line-height: 1.3; box-shadow: var(--shadow-xs);
+}
+.opt:hover { border-color: var(--accent); }
+.opt[data-on="true"] {
+  border-color: var(--accent); background: var(--accent-tint);
+  color: var(--accent-deep); font-weight: 600;
+  box-shadow: var(--ring);
+}
+.opt:active { transform: scale(0.985); }
+
+/* ═══════════════════════════════════════════════════
+   TARJETAS / SUPERFICIES
+   ═══════════════════════════════════════════════════ */
+.card {
+  background: var(--bg-surface); border-radius: var(--r-md);
+  border: 1px solid var(--hairline); box-shadow: var(--shadow-sm);
+}
+.card-hover { transition: box-shadow .2s, transform .2s, border-color .2s; }
+.card-hover:hover { box-shadow: var(--shadow-md); border-color: var(--line-strong); transform: translateY(-2px); }
+
+.panel { background: var(--bg-surface); border: 1px solid var(--hairline); }
+.divider { height: 1px; background: var(--hairline); }
+
+/* ── Segmented control ────────────────────────────── */
+.segmented { display: inline-flex; align-items: center; gap: 3px; padding: 4px; border-radius: var(--r-sm); background: var(--bg-tinted); border: 1px solid var(--hairline); }
+.segmented > button { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 13px; border-radius: var(--r-xs); font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.segmented > button:hover { color: var(--ink); }
+.segmented > button[data-on="true"] { background: var(--bg-surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+
+} /* end @layer components */
+
+/* ═══════════════════════════════════════════════════
+   THEME + ANIMACIONES
+   ═══════════════════════════════════════════════════ */
+@theme {
+  --color-canvas:      var(--bg-canvas);
+  --color-surface:     var(--bg-surface);
+  --color-elevated:    var(--bg-elevated);
+  --color-tinted:      var(--bg-tinted);
+  --color-deep:        var(--bg-deep);
+  --color-frost:       var(--bg-frost);
+  --color-ink:         var(--ink);
+  --color-ink-soft:    var(--ink-soft);
+  --color-muted:       var(--muted);
+  --color-faint:       var(--faint);
+  --color-hairline:    var(--hairline);
+  --color-line-strong: var(--line-strong);
+  --color-accent:      var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-tint: var(--accent-tint);
+  --color-accent-bright: var(--accent-bright);
+  --color-sage:        var(--sage);
+  --color-sage-soft:   var(--sage-soft);
+  --color-success:     var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger:      var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-display:      var(--font-display);
+  --font-body:         var(--font-body);
+}
+
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-tinted) 0%, var(--hairline) 50%, var(--bg-tinted) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse-ring {
+  0%   { transform: scale(0.85); opacity: 0.7; }
+  70%  { transform: scale(1.25); opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.float-up { animation: float-up 0.34s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes draw-dash { to { stroke-dashoffset: 0; } }
