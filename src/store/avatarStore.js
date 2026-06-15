@@ -69,5 +69,18 @@ export const useAvatarStore = create((set, get) => ({
     return { currentOutfit: next }
   }),
 
+  /* Viste el avatar con un look completo: limpia todo y coloca cada prenda en su
+     slot. Respeta la exclusión vestido ↔ top/bottom. `items` son las prendas ya
+     resueltas (objetos), no ids. */
+  vestirOutfit: (items) => set(() => {
+    const next = { ...OUTFIT_VACIO }
+    for (const item of items ?? []) {
+      const slot = ZONE_TO_SLOT[item?.body_zone]
+      if (slot) next[slot] = item
+    }
+    if (next.dress) { next.top = null; next.bottom = null }
+    return { currentOutfit: next }
+  }),
+
   setPose: (pose) => set({ pose }),
 }))

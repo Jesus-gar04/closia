@@ -1,14 +1,39 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { useOutfits } from '../../hooks/useOutfits'
+import { useAvatarStore } from '../../store/avatarStore'
+import { useWardrobeStore } from '../../store/wardrobeStore'
 import clsx from 'clsx'
 
 export function OutfitCard({ outfit }) {
   const { calificarOutfit, eliminarOutfit } = useOutfits()
+  const vestirOutfit = useAvatarStore((s) => s.vestirOutfit)
+  const navigate = useNavigate()
   const [confirmar, setConfirmar] = useState(false)
+
+  // Viste el avatar con las prendas del look y navega a la vista del avatar.
+  const probarLook = () => {
+    const ids = outfit.clothing_ids ?? []
+    const items = useWardrobeStore.getState().items
+    const prendas = ids.map((id) => items.find((i) => i.id === id)).filter(Boolean)
+    if (prendas.length === 0) {
+      toast.error('Las prendas de este look ya no están en tu armario')
+      return
+    }
+    vestirOutfit(prendas)
+    if (prendas.length < ids.length) toast('Algunas prendas ya no están disponibles', { icon: '⚠️' })
+    navigate('/avatar')
+  }
 
   return (
     <div className="bg-surface rounded-md border border-hairline overflow-hidden hover:shadow-card hover:border-accent/30 group">
-      <div className="aspect-[3/4] bg-tinted relative overflow-hidden">
+      <button
+        type="button"
+        onClick={probarLook}
+        title="Probar este look en el avatar"
+        className="aspect-[3/4] w-full bg-tinted relative overflow-hidden block cursor-pointer"
+      >
         {outfit.screenshot_url ? (
           <img src={outfit.screenshot_url} alt={outfit.name} className="w-full h-full object-cover" />
         ) : (
@@ -16,13 +41,27 @@ export function OutfitCard({ outfit }) {
             <div className="w-16 h-16 rounded-full bg-accent-soft flex items-center justify-center text-accent-deep text-[22px]">★</div>
           </div>
         )}
-        <button
-          onClick={() => setConfirmar(true)}
+
+        {/* Overlay "Probar look" al pasar el cursor */}
+        <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-ink/55 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="mb-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface/95 text-ink text-[12px] font-medium shadow-card">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 6a2 2 0 0 1 2 2c0 1-1 1.6-1 2.4L21 15H3l8-4.6c0-.8-1-1.4-1-2.4a2 2 0 0 1 2-2z" />
+            </svg>
+            Probar look
+          </span>
+        </div>
+
+        <span
+          role="button"
+          tabIndex={0}
+          onClick={(e) => { e.stopPropagation(); setConfirmar(true) }}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); setConfirmar(true) } }}
           className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-canvas/95 flex items-center justify-center text-[13px] text-muted hover:text-danger opacity-0 group-hover:opacity-100"
         >
           ✕
-        </button>
-      </div>
+        </span>
+      </button>
 
       <div className="p-3.5 space-y-2">
         <p className="text-[13px] font-medium text-ink truncate">{outfit.name}</p>
