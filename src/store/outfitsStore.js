@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { cloudHabilitado, dbListarOutfits, dbCrearOutfit, dbEliminarOutfit, dbCalificarOutfit } from '../lib/db'
+import { cloudHabilitado, dbListarOutfits, dbCrearOutfit, dbEliminarOutfit, dbCalificarOutfit, dbActualizarOutfit } from '../lib/db'
 
 /* Supabase como fuente de verdad + caché localStorage (ver wardrobeStore). */
 const LS = 'closia.outfits.v1'
@@ -36,6 +36,11 @@ export const useOutfitsStore = create((set) => ({
     set((s) => { const next = [o, ...s.outfits]; escribir(next); return { outfits: next } })
     nube(dbCrearOutfit(o))
     return o
+  },
+
+  updateOutfit: (id, data) => {
+    set((s) => { const next = s.outfits.map((o) => (o.id === id ? { ...o, ...data } : o)); escribir(next); return { outfits: next } })
+    nube(dbActualizarOutfit(id, data))
   },
 
   removeOutfit: (id) => {

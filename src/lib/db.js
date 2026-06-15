@@ -124,6 +124,11 @@ export async function dbEliminarOutfit(id) {
   if (error) throw error
 }
 
+export async function dbActualizarOutfit(id, updates) {
+  const { error } = await supabase.from('outfits').update(updates).eq('id', id)
+  if (error) throw error
+}
+
 export async function dbCalificarOutfit(id, rating) {
   const { error } = await supabase.from('outfits').update({ rating }).eq('id', id)
   if (error) throw error

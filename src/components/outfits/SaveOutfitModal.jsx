@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Modal } from '../ui/Modal'
 import { Button } from '../ui/Button'
 import { useUIStore } from '../../store/uiStore'
@@ -7,13 +7,22 @@ import { useOutfits } from '../../hooks/useOutfits'
 import toast from 'react-hot-toast'
 
 export function SaveOutfitModal({ canvasRef }) {
-  const { saveOutfitModalOpen, closeSaveOutfit } = useUIStore()
+  const { saveOutfitModalOpen, closeSaveOutfit, editingOutfit, cancelEditOutfit } = useUIStore()
   const { currentOutfit } = useAvatarStore()
-  const { guardarOutfit } = useOutfits()
+  const { guardarOutfit, actualizarOutfit } = useOutfits()
 
+  const editando = Boolean(editingOutfit)
   const [nombre, setNombre] = useState('')
   const [tags, setTags] = useState('')
   const [guardando, setGuardando] = useState(false)
+
+  // Al abrir en modo edición, precargar nombre y etiquetas del look.
+  useEffect(() => {
+    if (saveOutfitModalOpen && editingOutfit) {
+      setNombre(editingOutfit.name ?? '')
+      setTags((editingOutfit.tags ?? []).join(', '))
+    }
+  }, [saveOutfitModalOpen, editingOutfit])
 
   const cerrar = () => { setNombre(''); setTags(''); closeSaveOutfit() }
 
@@ -27,23 +36,36 @@ export function SaveOutfitModal({ canvasRef }) {
         try { screenshotUrl = canvas.toDataURL('image/jpeg', 0.82) } catch { /* noop */ }
       }
       const clothingIds = Object.values(currentOutfit).filter(Boolean).map((p) => p.id)
-      await guardarOutfit({
+      const datos = {
         nombre: nombre.trim(),
         clothingIds,
         screenshotUrl,
         tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
-      })
-      toast.success('Look guardado')
+      }
+      if (editando) {
+        await actualizarOutfit(editingOutfit.id, datos)
+        cancelEditOutfit()
+        toast.success('Look actualizado')
+      } else {
+        await guardarOutfit(datos)
+        toast.success('Look guardado')
+      }
       cerrar()
     } catch {
-      toast.error('No se pudo guardar')
+      toast.error(editando ? 'No se pudo actualizar' : 'No se pudo guardar')
     } finally {
       setGuardando(false)
     }
   }
 
   return (
-    <Modal abierto={saveOutfitModalOpen} onCerrar={cerrar} titulo="Guardar look" subtitulo="Dale un nombre y etiquétalo" ancho="sm">
+    <Modal
+      abierto={saveOutfitModalOpen}
+      onCerrar={cerrar}
+      titulo={editando ? 'Actualizar look' : 'Guardar look'}
+      subtitulo={editando ? 'Edita las prendas y guarda los cambios' : 'Dale un nombre y etiquétalo'}
+      ancho="sm"
+    >
       <div className="px-6 sm:px-8 py-6 space-y-5">
         <div>
           <label className="block text-[11.5px] font-medium text-ink-soft mb-2">Nombre del look *</label>
@@ -70,7 +92,7 @@ export function SaveOutfitModal({ canvasRef }) {
       </div>
       <div className="px-6 sm:px-8 pb-6 flex gap-2">
         <Button variante="secundario" className="flex-1" onClick={cerrar} disabled={guardando}>Cancelar</Button>
-        <Button variante="acento" className="flex-1" onClick={guardar} cargando={guardando}>Guardar</Button>
+        <Button variante="acento" className="flex-1" onClick={guardar} cargando={guardando}>{editando ? 'Actualizar' : 'Guardar'}</Button>
       </div>
     </Modal>
   )

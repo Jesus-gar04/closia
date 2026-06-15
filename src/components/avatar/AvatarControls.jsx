@@ -35,8 +35,9 @@ function IcnSave() {
 }
 export function AvatarControls({ onScreenshot }) {
   const { pose, setPose, currentOutfit } = useAvatarStore()
-  const { openSaveOutfit } = useUIStore()
+  const { openSaveOutfit, editingOutfit, cancelEditOutfit } = useUIStore()
   const tienePrendas = Object.values(currentOutfit).some(Boolean)
+  const editando = Boolean(editingOutfit)
 
   return (
     <div className="flex items-center justify-between gap-3 px-4 md:px-7 py-3 bg-surface/85 backdrop-blur-xl border-t border-hairline flex-shrink-0">
@@ -50,6 +51,14 @@ export function AvatarControls({ onScreenshot }) {
         ))}
       </div>
 
+      {/* Indicador de edición de look */}
+      {editando && (
+        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-soft text-accent-deep text-[12px] font-medium">
+          <span className="truncate max-w-[180px]">Editando «{editingOutfit.name}»</span>
+          <button onClick={cancelEditOutfit} title="Cancelar edición" className="hover:text-danger" aria-label="Cancelar edición">✕</button>
+        </div>
+      )}
+
       {/* Acciones */}
       <div className="flex items-center gap-2">
         <button onClick={onScreenshot} title="Descargar captura" className="btn btn-outline btn-icon btn-sm">
@@ -57,7 +66,7 @@ export function AvatarControls({ onScreenshot }) {
         </button>
         <button onClick={openSaveOutfit} disabled={!tienePrendas} className="btn btn-accent btn-sm">
           <IcnSave />
-          <span className="hidden sm:inline">Guardar look</span>
+          <span className="hidden sm:inline">{editando ? 'Actualizar look' : 'Guardar look'}</span>
         </button>
       </div>
     </div>
